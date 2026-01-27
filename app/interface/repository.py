@@ -9,7 +9,7 @@ class ARepo(ABC):
     @abstractmethod
     async def get_all(cls, *args, **kwargs) -> Optional[list[DBModel]]:
         """
-        Возвращает все модели из БД
+        Возвращает все модели из конкретной таблицы БД
         :return: Список всех моделей | None
         """
         pass
@@ -20,7 +20,7 @@ class ARepo(ABC):
     @abstractmethod
     async def get_last(cls, *args, **kwargs) -> Optional[DBModel]:
         """
-        Возвращает последнюю добавленную модель из БД
+        Возвращает последнюю добавленную модель из конкретной таблицы БД
         :return: Модель | None
         """
         pass
@@ -30,7 +30,7 @@ class ARepo(ABC):
     @abstractmethod
     async def get_by_date(cls, *args, **kwargs) -> Optional[list[DBModel]]:
         """
-        Возвращает список всех моделей, добавленных за указанный интервал времени
+        Возвращает список всех моделей, добавленных за указанный интервал времени конкретной таблицы БД
         :return: Список моделей | None
         """
         pass
@@ -40,7 +40,7 @@ class ARepo(ABC):
     @abstractmethod
     async def clear(cls, *args, **kwargs) -> list:
         """
-        Очищает БД моделей определенной категории и сбрасывает последовательность id моделей
+        Очищает конкретную таблицу БД сбрасывает последовательность id моделей
         :return: Пустой список
         """
         pass

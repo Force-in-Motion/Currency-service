@@ -7,31 +7,20 @@ class AService(ABC):
 
     @classmethod
     @abstractmethod
-    async def get_all_models_table(cls, *args, **kwargs) -> Optional[list[DBModel]]:
+    async def get_all_models_from_table(cls, *args, **kwargs) -> Optional[list[DBModel]]:
         """
-        Возвращает все модели из БД
+        Возвращает все модели из конкретной таблицы БД согласно условию
         :return: Список всех моделей | None
         """
         pass
 
 
-
     @classmethod
     @abstractmethod
-    async def get_last_model_in_table(cls, *args, **kwargs) -> Optional[DBModel]:
+    async def get_model_from_table(cls, *args, **kwargs) -> Optional[DBModel]:
         """
-        Возвращает последнюю добавленную модель из БД
+        Возвращает последнюю добавленную модель из БД согласно условию
         :return: Модель | None
-        """
-        pass
-
-
-    @classmethod
-    @abstractmethod
-    async def get_list_models_by_date(cls, *args, **kwargs) -> Optional[list[DBModel]]:
-        """
-        Возвращает список всех моделей, добавленных за указанный интервал времени
-        :return: Список моделей | None
         """
         pass
 
