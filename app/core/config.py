@@ -17,3 +17,6 @@ class DBSettings(BaseSettings):
         extra="ignore",
         env_prefix="DB_",
     )
+
+
+db_settings = DBSettings()
