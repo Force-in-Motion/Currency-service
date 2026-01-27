@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from app.tools.types import DBModel
 
 
-class ARepo(ABC):
+class AService(ABC):
 
     @classmethod
     @abstractmethod
