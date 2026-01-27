@@ -45,7 +45,7 @@ class BaseRepo(Generic[DBModel], ARepo):
         session: AsyncSession,
     ) -> Optional[DBModel]:
         """
-        Возвращает последнюю добавленную модель в  таблицы БД
+        Возвращает последнюю добавленную модель в таблицы БД
         :param model_id: id модели
         :param session: объект асинхронной сессии
         :return: ORM модель по ее id
