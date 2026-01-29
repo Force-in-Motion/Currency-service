@@ -24,6 +24,15 @@ class AService(ABC):
         """
         pass
 
+    
+    @classmethod
+    @abstractmethod
+    async def register_model(cls, *args, **kwargs) -> object:
+        """
+        Добавляет модель в БД
+        :return: Модель, добавленную в БД
+        """
+        pass
 
     @classmethod
     @abstractmethod
@@ -33,3 +42,5 @@ class AService(ABC):
         :return: Пустой список
         """
         pass
+
+    

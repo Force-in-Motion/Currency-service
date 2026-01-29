@@ -33,7 +33,15 @@ class ARepo(ABC):
         :return: Модель | None
         """
         pass
-
+    
+    @classmethod
+    @abstractmethod
+    async def create(cls, *args, **kwargs) -> DBModel:
+        """
+        Добавляет модель в БД
+        :return: Модель, добавленную в БД
+        """
+        pass
 
     @classmethod
     @abstractmethod

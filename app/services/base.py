@@ -3,7 +3,7 @@ from typing import Type, Generic, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.interface.service import AService
-from app.tools.types import DBModel, Repo
+from app.tools.types import DBModel, PDScheme, Repo
 
 
 class BaseService(Generic[Repo], AService):
@@ -57,6 +57,26 @@ class BaseService(Generic[Repo], AService):
 
         # TODO: Подразумевается что метод может расширяться и будут добавлены варианты поиска модели
 
+    @classmethod
+    async def register_model(
+        cls,
+        scheme_in: PDScheme,
+        session: AsyncSession,
+    ) -> DBModel:
+        """
+        Регистрирует модель в БД согласно полученым параметрам
+        :param scheme_in: Pydantic схема - объект, содержащий данные для регистрации модели
+        :param user_id: Опциональный параметр, id пользователя
+        :param session: Асинхронная сессия
+        :return: Зарегистрированную ORM модель
+        """
+
+        data = scheme_in.model_dump()
+
+        return await cls.repo.create(
+            model=cls.repo.model(**data),
+            session=session,
+        )
 
     @classmethod
     async def clear_table(

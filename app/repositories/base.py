@@ -74,9 +74,9 @@ class BaseRepo(Generic[DBModel], ARepo):
     ) -> Optional[DBModel]:
         """
         Возвращает последнюю добавленную модель в таблицы БД
-        :param model_id: id модели
+        :param name: name модели
         :param session: объект асинхронной сессии
-        :return: ORM модель по ее id
+        :return: ORM модель по ее name
         """
         try:
             stmt = (
@@ -94,6 +94,29 @@ class BaseRepo(Generic[DBModel], ARepo):
             raise DatabaseError(
                 f"Error when receiving {cls.model.__name__} by id"
             ) from e
+
+    @classmethod
+    async def create(
+        cls,
+        model: DBModel,
+        session: AsyncSession,
+    ) -> DBModel:
+        """
+        Добавляет модель пользователя в конкретную таблицу БД
+        :param model: ORM модель
+        :param session: объект асинхронной сессии
+        :return: ORM модель, добавленную в БД
+        """
+        try:
+            session.add(model)
+            await session.commit()
+            await session.refresh(model)
+
+            return model
+
+        except SQLAlchemyError as e:
+            await session.rollback()
+            raise DatabaseError(f"Error when adding {cls.model.__name__}") from e
 
     @classmethod
     async def clear(
