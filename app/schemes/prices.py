@@ -1,16 +1,19 @@
-from typing import Annotated
-from pydantic import BaseModel
+from typing import List
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
-
-
-class PriceResponse(BaseModel):
+class PriceRequest(BaseModel):
     ticker: str
     price: str
+
+
+class PriceResponse(PriceRequest):
+    model_config = ConfigDict(from_attributes=True)
+
     created_at: datetime
     updated_at: datetime
 
 
 class PriceListResponse(BaseModel):
-    prices: Annotated[list, PriceResponse]
+    prices: List[PriceResponse]
