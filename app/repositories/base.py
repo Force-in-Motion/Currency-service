@@ -17,17 +17,18 @@ class BaseRepo(Generic[DBModel], ARepo):
     model: Type[DBModel]
 
     @classmethod
-    async def get_all(
+    async def get_all_by_name(
         cls,
+        name: str,
         session: AsyncSession,
-    ) -> Optional[list[DBModel]]:
+    ) -> list[DBModel]:
         """
-        Возвращает все модели, содержащиеся в конкретной таблице БД
+        Возвращает все модели по их названию, содержащиеся в конкретной таблице БД
         :param session: Объект асинхронной сессии
         :return: Список всех ORM моделей
         """
         try:
-            stmt = select(cls.model).order_by(cls.model.id)
+            stmt = select(cls.model).where(cls.model.name == name).order_by(cls.model.id)
 
             result = await session.execute(stmt)
 
@@ -41,11 +42,12 @@ class BaseRepo(Generic[DBModel], ARepo):
     @classmethod
     async def get_all_by_date(
         cls,
-        dates: tuple[datetime, datetime],
+        name: str,
         session: AsyncSession,
-    ) -> Optional[list[DBModel]]:
+        dates: tuple[datetime, datetime],
+    ) -> list[DBModel]:
         """
-        Возвращает список всех модель, содержащихся в конкретной таблице БД, добавленных за указанный интервал времени
+        Возвращает список всех моделей по их названию, содержащихся в конкретной таблице БД, добавленных за указанный интервал времени
         :param session: объект асинхронной сессии
         :param dates:  кортеж, содержащий начало интервала времени и его окончание
         :return: список всех ORM моделей, добавленных за указанный интервал времени
@@ -53,7 +55,10 @@ class BaseRepo(Generic[DBModel], ARepo):
         try:
             stmt = (
                 select(cls.model)
-                .where(cls.model.created_at.between(*dates))
+                .where(
+                    cls.model.name == name,
+                    cls.model.created_at.between(*dates),
+                )
                 .order_by(cls.model.created_at.desc())
             )
 
@@ -73,7 +78,7 @@ class BaseRepo(Generic[DBModel], ARepo):
         session: AsyncSession,
     ) -> Optional[DBModel]:
         """
-        Возвращает последнюю добавленную модель в таблицы БД
+        Возвращает последнюю добавленную модель по ее названию в конкретную таблицу БД
         :param name: name модели
         :param session: объект асинхронной сессии
         :return: ORM модель по ее name
@@ -81,7 +86,7 @@ class BaseRepo(Generic[DBModel], ARepo):
         try:
             stmt = (
                 select(cls.model)
-                .where(cls.model.ticker == name)
+                .where(cls.model.name == name)
                 .order_by(cls.model.created_at.desc())
                 .limit(1)
             )
@@ -102,7 +107,7 @@ class BaseRepo(Generic[DBModel], ARepo):
         session: AsyncSession,
     ) -> DBModel:
         """
-        Добавляет модель пользователя в конкретную таблицу БД
+        Добавляет модель в конкретную таблицу БД
         :param model: ORM модель
         :param session: объект асинхронной сессии
         :return: ORM модель, добавленную в БД

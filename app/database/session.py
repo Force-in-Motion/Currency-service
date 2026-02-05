@@ -1,4 +1,6 @@
+from contextlib import asynccontextmanager
 from typing import AsyncGenerator
+from sqlalchemy.pool import NullPool
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -8,28 +10,44 @@ from app.core.config import db_settings
 
 
 class SessionMaker:
-    """ Ключевой объект приложения, создающий подключение к БД, фабрику сессий и управляет сиссиями """
+    """Ключевой объект приложения, создающий подключение к БД, фабрику сессий и управляет сиссиями"""
 
     def __init__(self, url: str, echo: bool):
-        self.engine = create_async_engine(
+        self.__engine = create_async_engine(
             url=url,
             echo=echo,
+            poolclass=NullPool,
         )
 
-        self.session_factory = async_sessionmaker(
-            bind=self.engine,
+        self.__session_factory = async_sessionmaker(
+            bind=self.__engine,
             autoflush=False,
             autocommit=False,
             expire_on_commit=False,
         )
 
+
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
         """
-        Асинхронный контекстный менеджер, который предоставляет сессию для маршрутов и автоматически закрывает её после использования.
+        Асинхронный генератор, который предоставляет сессию для маршрутов и автоматически закрывает её после использования.
         :return: AsyncSession
         """
-        async with self.session_factory() as session:
+        async with self.__session_factory() as session:
             yield session
 
 
-db_connector = SessionMaker(url=db_settings.url, echo=db_settings.echo)
+    @asynccontextmanager
+    async def session_scope(self):
+        """
+        Асинхронный контекстный менеджер, который предоставляет сессию celery и автоматически закрывает её после использования.
+        :return: AsyncSession
+        """
+        async with self.__session_factory() as session:
+            yield session
+
+
+
+db_connector = SessionMaker(
+    url=db_settings.url,
+    echo=db_settings.echo,
+)

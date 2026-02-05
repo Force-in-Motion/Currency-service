@@ -7,7 +7,7 @@ class ARepo(ABC):
 
     @classmethod
     @abstractmethod
-    async def get_all(cls, *args, **kwargs) -> Optional[list[DBModel]]:
+    async def get_all_by_name(cls, *args, **kwargs) -> Optional[list[DBModel]]:
         """
         Возвращает все модели из конкретной таблицы БД
         :return: Список всех моделей | None

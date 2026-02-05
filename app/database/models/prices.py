@@ -9,7 +9,7 @@ class Price(Base, TimestampMixin):
 
     __tablename__ = "prices"
 
-    ticker: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
 
     price: Mapped[str] = mapped_column(String, nullable=False)
 

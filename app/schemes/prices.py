@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class PriceRequest(BaseModel):
-    ticker: str
+    name: str
     price: str
 
 

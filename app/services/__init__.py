@@ -1,6 +1,6 @@
 __all__ = [
-    "PriceResponse",
-    "PriceListResponse",
+    "BaseService",
+    "PriceService",
 ]
 
 

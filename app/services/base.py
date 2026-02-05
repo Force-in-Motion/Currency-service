@@ -3,7 +3,7 @@ from typing import Type, Generic, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.interface.service import AService
-from app.tools.types import DBModel, PDScheme, Repo
+from app.tools import DBModel, PDScheme, Repo
 
 
 class BaseService(Generic[Repo], AService):
@@ -14,24 +14,28 @@ class BaseService(Generic[Repo], AService):
     async def get_all_models_from_table(
         cls,
         session: AsyncSession,
-        dates: Optional[datetime] = None,
-    ) -> Optional[list[DBModel]]:
+        name: Optional[str] = None,
+        dates: Optional[tuple[datetime, datetime]] = None,
+    ) -> list[DBModel]:
         """
         TODO: Оркестрация вариантов поиска
         Возвращает все модели согласно полученым параметрам
         :param session: Асинхронная сессия
+        :param name: Опциональный параметр name - название модели,
         :param dates: Опциональный параметр dates - кортеж,
         содержащий начало интервала времени и его окончание
-        :return: Список всех ORM моделей | None
+        :return: Список всех ORM моделей | []
         """
-        if dates is not None:
-            return await cls.repo.get_all(
+        if dates is None:
+            return await cls.repo.get_all_by_name(
+                name=name,
                 session=session,
             )
 
-        return cls.repo.get_all_by_date(
-            session=session,
+        return await cls.repo.get_all_by_date(
+            name=name,
             dates=dates,
+            session=session,
         )
 
     @classmethod
@@ -49,7 +53,7 @@ class BaseService(Generic[Repo], AService):
         :param model_id: Опциональный параметр, id  модели
         :return: ORM Модель | None
         """
-        if last is not None:
+        if last:
             return await cls.repo.get_last_by_name(
                 name=name,
                 session=session,
@@ -86,6 +90,6 @@ class BaseService(Generic[Repo], AService):
         """
         Очищает таблицу БД
         :param session: объект асинхронной сессии
-        :return: Пустой список
+        :return: []
         """
         return await cls.repo.clear(session=session)
